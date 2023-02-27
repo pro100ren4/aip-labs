@@ -67,25 +67,25 @@ struct student* enterData(unsigned int numOfStudents)
 
         puts("enter student grades");
         printf("phisics:");
-        while(scanf("%d", &studentArr[i].grades.phisics)!=1)
+        while(scanf("%f", &studentArr[i].grades.phisics)!=1)
         {
             rewind(stdin);
             puts("error: incorrect value");
         }
         printf("math:");
-        while(scanf("%d", &studentArr[i].grades.math)!=1)
+        while(scanf("%f", &studentArr[i].grades.math)!=1)
         {
             rewind(stdin);
             puts("error: incorrect value");
         }
         printf("programming:");
-        while(scanf("%d", &studentArr[i].grades.prog)!=1)
+        while(scanf("%f", &studentArr[i].grades.prog)!=1)
         {
             rewind(stdin);
             puts("error: incorrect value");
         }
         printf("history:");
-        while(scanf("%d", &studentArr[i].grades.history)!=1)
+        while(scanf("%f", &studentArr[i].grades.history)!=1)
         {
             rewind(stdin);
             puts("error: incorrect value");
@@ -105,7 +105,7 @@ int printFile(FILE* file)
     }
     while(fread(&tmp, sizeStudent, 1, file)==1)
     {
-        printf("%d %d %s %s %d %d\n %.2f %.2f %.2f %.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+        printf("UID:%d SeqNum:%d %s %s birth:%d admission:%d\n\tgrades:\nphis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     }
     return 0;
 }
@@ -167,9 +167,24 @@ int correctData(FILE* file, unsigned int numToCorrect)
         puts("error: can't find data");
         return -1;
     }
-    while(fread(&tmp, sizeStudent, 1, file)==1 || tmp.uid != numToCorrect);
-    fseek(file, (-1)*sizeStudent, SEEK_CUR);
-    printf("%d %d %s %s %d %d\n %.2f %.2f %.2f %.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+    rewind(file);
+    int succesFound = 0;
+    while(fread(&tmp, sizeStudent, 1, file)==1)
+    {
+        if(tmp.uid == numToCorrect)
+        {   
+            fseek(file, (-1)*sizeStudent, SEEK_CUR); 
+            succesFound = 1;
+            break;
+        } 
+    }
+    if(!succesFound)
+    {
+        puts("error: can't find student");
+        return -1;
+    }
+    puts("\tCorrecting Data");
+    printf("UID:%d SeqNum%d %s %s birth:%d admission:%d\n\tgrades:\nphis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     puts("enter new stident data:");
 
     printf("enter sequence number:");
@@ -216,25 +231,25 @@ int correctData(FILE* file, unsigned int numToCorrect)
 
     puts("enter student grades");
     printf("phisics:");
-    while(scanf("%d", &tmp.grades.phisics)!=1)
+    while(scanf("%f", &tmp.grades.phisics)!=1)
     {
         rewind(stdin);
         puts("error: incorrect value");
     }
     printf("math:");
-    while(scanf("%d", &tmp.grades.math)!=1)
+    while(scanf("%f", &tmp.grades.math)!=1)
     {
         rewind(stdin);
         puts("error: incorrect value");
     }
     printf("programming:");
-    while(scanf("%d", &tmp.grades.prog)!=1)
+    while(scanf("%f", &tmp.grades.prog)!=1)
     {
         rewind(stdin);
         puts("error: incorrect value");
     }
     printf("history:");
-    while(scanf("%d", &tmp.grades.history)!=1)
+    while(scanf("%f", &tmp.grades.history)!=1)
     {
         rewind(stdin);
         puts("error: incorrect value");
@@ -257,10 +272,11 @@ int printDataAbouAwesomeStudents(FILE* file)
         puts("error: can't find data");
         return -1;
     }
+    puts("\tAwesome Students");
     while(fread(&tmp, sizeStudent, 1, file)==1)
     {
         if(tmp.grades.phisics == 5.00f && tmp.grades.math == 5.00f && tmp.grades.prog == 5.00f && tmp.grades.history == 5.00f)
-            printf("%d %d %s %s %d %d\n %.2f %.2f %.2f %.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+            printf("UID:%d SeqNum:%d %s %s birth:%d admission:%d\n\tgrades:\nphis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     }
     return 0;
 }
@@ -286,26 +302,61 @@ int main()
     }
     struct student* studentData = enterData(numOfStudents);
     writeData(datafile, studentData, numOfStudents);
-
-    system("cls");
-    printFile(datafile);
-    getch();
-
-    system("cls");
-    printDataAbouAwesomeStudents(datafile);
-    getch();
-
-    system("cls");
-    printf("enter number of student to correct: ");
-    unsigned int numToCorrect;
-    while(scanf("%d", &numToCorrect)!= 1)
+    free(studentData);
+    int action, run = 1;
+    while(run)
     {
-        rewind(stdin);
-        puts("error: inccorect value");
-    }
-    correctData(datafile, numToCorrect);
-    getch();
+        system("cls");
+        puts("1 - enter students to file");
+        puts("2 - print students to screen");
+        puts("3 - correct data about student(uid)");
+        puts("4 - print data about awesome students");
+        puts("5 - exit");
+        printf("enter the action:");
+        scanf("%d", &action);
+        switch (action)
+        {
+        case 1:
+            printf("enter number of students:");
+            unsigned int numOfStudents=0;
+            while(scanf("%d", &numOfStudents)!= 1)
+            {
+                rewind(stdin);
+                puts("error: incorrect value");
+            }
+            struct student* studentData = enterData(numOfStudents);
+            writeData(datafile, studentData, numOfStudents);
+            free(studentData);
+            break;
+        
+        case 2:
+            printFile(datafile);
+            break;
 
+        case 3:
+            unsigned int numToCorrect;
+            while(scanf("%d", &numToCorrect)!=1)
+            {
+                rewind(stdin);
+                puts("error: incorrect value");
+            }
+            correctData(datafile, numToCorrect);
+            break;
+
+        case 4:
+            printDataAbouAwesomeStudents(datafile);
+            break;
+
+        case 5:
+            run = 0;
+            break;
+
+        default:
+            puts("error: incorrect value");
+            break;
+        }
+        getch();
+    }
     fclose(datafile);
     return 0;
 }
