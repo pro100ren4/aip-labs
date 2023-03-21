@@ -105,7 +105,7 @@ int printFile(FILE* file)
     }
     while(fread(&tmp, sizeStudent, 1, file)==1)
     {
-        printf("UID:%d SeqNum:%d %s %s birth:%d admission:%d\n\tgrades:\nphis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+        printf("UID:%d SeqNum:%d %s %s birth:%d admission:%d\nGrades>> phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     }
     return 0;
 }
@@ -184,7 +184,7 @@ int correctData(FILE* file, unsigned int numToCorrect)
         return -1;
     }
     puts("\tCorrecting Data");
-    printf("UID:%d SeqNum%d %s %s birth:%d admission:%d\n\tgrades:\nphis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+    printf("UID:%d SeqNum%d %s %s birth:%d admission:%d\nGrades>>phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     puts("enter new stident data:");
 
     printf("enter sequence number:");
@@ -283,10 +283,11 @@ int printDataAbouAwesomeStudents(FILE* file)
 
 int main()
 {
-    FILE* datafile = fopen("aip-lab9.dat", "rt+");
+    FILE* datafile = fopen("aip-lab9.dat", "rb+");
     if(datafile == NULL)
     {
-        FILE* datafile = fopen("aip-lab9.dat", "wt+");
+        puts("create new file");
+        FILE* datafile = fopen("aip-lab9.dat", "wb+");
         if(datafile == NULL)
         {
             puts("error: cant open/create file");
@@ -303,6 +304,7 @@ int main()
     struct student* studentData = enterData(numOfStudents);
     writeData(datafile, studentData, numOfStudents);
     free(studentData);
+    getch();
     int action, run = 1;
     while(run)
     {
@@ -312,7 +314,7 @@ int main()
         puts("3 - correct data about student(uid)");
         puts("4 - print data about awesome students");
         puts("5 - exit");
-        printf("enter the action:");
+        printf("Enter the action:");
         scanf("%d", &action);
         switch (action)
         {
@@ -355,6 +357,7 @@ int main()
             puts("error: incorrect value");
             break;
         }
+        puts("press <Enter>");
         getch();
     }
     fclose(datafile);

@@ -83,7 +83,7 @@ struct studentListData* createList(unsigned int listSize)
             puts("error: incorrect value");
         }
 
-        temp = 
+        temp;
         
     }
 
