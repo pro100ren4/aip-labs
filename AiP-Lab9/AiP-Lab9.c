@@ -105,7 +105,7 @@ int printFile(FILE* file)
     }
     while(fread(&tmp, sizeStudent, 1, file)==1)
     {
-        printf("UID:%d SeqNum:%d %s %s birth:%d admission:%d\nGrades>> phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+        printf("\nUID:%d SeqNum:%d %s %s birth:%d admission:%d\nGrades>> phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     }
     return 0;
 }
@@ -184,7 +184,7 @@ int correctData(FILE* file, unsigned int numToCorrect)
         return -1;
     }
     puts("\tCorrecting Data");
-    printf("UID:%d SeqNum%d %s %s birth:%d admission:%d\nGrades>>phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+    printf("\nUID:%d SeqNum%d %s %s birth:%d admission:%d\nGrades>>phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     puts("enter new stident data:");
 
     printf("enter sequence number:");
@@ -276,7 +276,7 @@ int printDataAbouAwesomeStudents(FILE* file)
     while(fread(&tmp, sizeStudent, 1, file)==1)
     {
         if(tmp.grades.phisics == 5.00f && tmp.grades.math == 5.00f && tmp.grades.prog == 5.00f && tmp.grades.history == 5.00f)
-            printf("UID:%d SeqNum:%d %s %s birth:%d admission:%d\n\tgrades:\nphis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
+            printf("\nUID:%d SeqNum:%d %s %s birth:%d admission:%d\nGrades>>phis:%.2f math:%.2f prog:%.2f his:%.2f\n", tmp.uid, tmp.sequenceNum, tmp.surname, tmp.name, tmp.yearOfBirth, tmp.yearOFAdmiss, tmp.grades.phisics, tmp.grades.math, tmp.grades.prog, tmp.grades.history);
     }
     return 0;
 }
@@ -350,6 +350,7 @@ int main()
             break;
 
         case 5:
+            fclose(datafile);
             run = 0;
             break;
 
