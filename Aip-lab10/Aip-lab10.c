@@ -21,7 +21,7 @@ const int list_elem_size = sizeof(struct list);
 struct student enter_data()
 {
     struct student tmp; 
-    printf("Enter student data:");
+    printf("\tEnter student data\n");
     printf("Sequence number:");
     while(scanf("%d", &(tmp.sequenceNum))!= 1)
     {
@@ -120,10 +120,62 @@ struct list* create_list(unsigned int list_size)
     return beg;
 }
 
+void delete_list(struct list* beg)
+{
+    struct list* curr;
+    while(beg != NULL)
+    {
+        curr = beg;
+        beg = curr->next;
+        free(curr);
+    }
+}
+
+int list_size(struct list* beg)
+{
+    int size = 0;
+    struct list* tmp = beg;
+    while(tmp != NULL)
+    {
+        size++;
+        tmp = tmp->next;
+    }
+    return size;
+}
+
+int sort_list(struct list* beg)
+{
+    int size = list_size(beg);
+
+
+    return 0;
+}
+
+int write_file(FILE* file, struct list* beg)
+{
+    return 0;
+}
+
+int read_file(FILE* file, struct list* beg)
+{
+    return 0;
+}
+
+int print_students(struct list* beg)
+{
+    return 0;
+}
+
+int print_awesome_students(struct list* beg)
+{
+    return 0;
+}
+
  
 
 int main()
 {
     struct list* beg = create_list(5);
+    delete_list(beg);
     return 0;
 }
