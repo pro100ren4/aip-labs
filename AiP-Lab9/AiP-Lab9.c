@@ -118,13 +118,14 @@ int sortFile(FILE* file)
     rewind(file);
     if(file == NULL)
         return -1;
-    for(long i = fileLength-1; i >= 0; i--)
+    for(int i = 0; i < fileLength-1; i++)
     {
-        for(long j = 0; j < i-1; j++)
+        for(int j = 0; j < fileLength-1; j++)
         {
             fseek(file, j*sizeStudent, SEEK_SET);
             fread(&tmp1, sizeStudent, 1, file);
             fread(&tmp2, sizeStudent, 1, file);
+
             if(tmp1.uid > tmp2.uid)
             {
                 fseek(file, (-2)*sizeStudent, SEEK_CUR);
