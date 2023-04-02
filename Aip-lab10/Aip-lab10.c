@@ -133,7 +133,7 @@ void delete_list(struct list* beg)
     }
 }
 
-//add element after element with UID
+//add element after element with <uid>
 struct list* add_to_list(struct list* beg, unsigned long uid, struct student new_student)
 {
     struct list* tmp = (struct list*)malloc(list_size);
@@ -168,34 +168,38 @@ struct list* add_to_list(struct list* beg, unsigned long uid, struct student new
     return res;
 }
 
-int add_two_before_last(struct list* beg, struct student new_student1, struct student new_student2)
+struct list* add_two_before_last(struct list* beg, struct student new_student1, struct student new_student2)
 {
     if(!beg)
     {
         puts("error<add_two_before_last>: List is empty");
-        return -1;
+        return NULL;
     }
 
     struct list* tmp1 = (struct list*)malloc(list_size);
     tmp1->data = new_student1;
     struct list* tmp2 = (struct list*)malloc(list_size);
     tmp2->data = new_student2;
+    struct list* tmp;
+    struct list* start = beg;
 
     if(beg->next == NULL)
     {
-        struct list* tmp;
-        tmp2->next = beg;
-        beg = tmp1; 
+        tmp = beg;
+        beg = tmp1;
+        tmp1->next = tmp2;
+        tmp2->next = tmp;
+        return beg;
     }
     while(beg->next->next != NULL) beg = beg->next;
-
-    tmp1->next = tmp2;
+    tmp = beg->next;
     beg->next = tmp1;
-    tmp2->next = NULL;
-    return 0;
+    tmp1->next = tmp2;
+    tmp2->next = tmp;
+    return start;
 }
 
-//delete element with UID
+//delete element with <uid>
 struct list* del_from_list(struct list* beg, unsigned long uid)
 {
     if(!beg)
@@ -204,38 +208,48 @@ struct list* del_from_list(struct list* beg, unsigned long uid)
         return NULL;
     }
     struct list* tmp;
-    int f = 0;
-    if(beg->data.uid == uid)
+    struct list* curr = beg;
+
+    
+    if(curr->next != NULL)
     {
-        tmp = beg;
-        beg = tmp->next;
-        free(tmp);
-        return beg;
-    }
-    while(beg->next)
-    {
-        if(beg->next->data.uid = uid)
+        if(curr->data.uid == uid)
         {
-            tmp = beg->next;
-            beg->next = tmp->next;
+            tmp = curr;
+            curr = tmp->next;
             free(tmp);
-            f = 1;
-            break;
+            return curr;
         }
-        beg = beg->next;
+        while (curr->next->next != NULL)
+        {
+            if(curr->next->data.uid == uid)
+            {   
+                tmp = curr->next;
+                curr->next = tmp->next;
+                free(tmp);
+                return beg;
+            }
+            curr = curr->next;
+        }
+        if(curr->next->data.uid == uid)
+        {
+            tmp = curr->next;
+            curr->next = NULL;
+            free(tmp);
+            return beg;
+        }
     }
-    if(!f)
+    else
     {
-        puts("error<del_from_list>: Didn't delete element");
-        return -1;
+        if (curr->data.uid == uid)
+        {
+            free(curr);
+            return NULL;
+        }
     }
-    if(beg->next == NULL && beg->data.uid == uid)
-    {
-        tmp = beg;
-        beg == NULL;
-        free(tmp);
-    }
-    return 0;
+
+    puts("error<del_from_list>: Didn't delete element");
+    return beg;
 }
 
 int sort_file(FILE* file)
@@ -285,7 +299,7 @@ int write_file(FILE* file, struct list* beg)
     sort_file(file);
     return 0;
 }
-//[beg] must be empty 
+//<beg> must be empty 
 struct list* read_file(FILE* file, struct list* beg)
 {
     if(!file)
@@ -298,10 +312,11 @@ struct list* read_file(FILE* file, struct list* beg)
         puts("error<read_file>: The list is not empty");
         return NULL;
     }
-
-    long file_length = fseek(file, 0, SEEK_END)/student_size;
+    fseek(file, 0, SEEK_END);
+    long file_length = ftell(file)/student_size;
     struct list* curr = NULL;
     struct student tmp;
+    rewind(file);
     for(int i = 0;i < file_length; i++)
     {
         struct list* node = (struct list*)malloc(list_size);
@@ -387,10 +402,10 @@ int main()
         puts("1 - create list");
         puts("2 - print list");
         puts("3 - add element to list");
-        puts("4 - delete element from list");
-        puts("5 - write list to file");
-        puts("6 - read list from file");
-        puts("7 - delete list");
+        puts("4 - delete element from list");//3
+        puts("5 - write list to file");//4?
+        puts("6 - read list from file");//2
+        puts("7 - delete list");//1
         puts("8 - add two elements before last element");
         puts("9 - exit");
         printf("\nEnter action:");
@@ -428,7 +443,8 @@ int main()
             break;
 
         case 3:
-            puts("\tThe function adds an element after the element with the specified UID");
+            puts("\tAdd after the element with UID");
+            printf("UID:");
             unsigned long UID;
             while(scanf("%d", &UID)!= 1)
             {
@@ -439,13 +455,14 @@ int main()
             break;
         
         case 4:
+            puts("\tDelete an element by UID");
+            printf("UID:");
             while(scanf("%d", &UID)!= 1)
             {
                 rewind(stdin);
                 puts("error<main>: Incorrect value");
             }
-            del_from_list(beg, UID);
-            puts("\tElement was deleted");
+            beg = del_from_list(beg, UID);
             break;
         
         case 5:
@@ -455,7 +472,7 @@ int main()
         case 6:
             if(beg)
             {
-                printf("warn<main>: List will rewritten. Are you sure(y/n)&");
+                printf("warn<main>: List will rewritten. Are you sure(y/n)?");
                 rewind(stdin);
                 while(scanf("%c", &choice)!=1)
                 {
@@ -466,11 +483,13 @@ int main()
                 {
                     delete_list(beg);beg = NULL;
                     puts("\tList was deleted");
-                    read_file(file, beg);
+                    beg = read_file(file, beg);
                 }
                 else if(choice == 'n');
                 else puts("error<main>: Incorrect value");
             }
+            else
+                beg = read_file(file, beg);         
             break;
         
         case 7:
@@ -491,7 +510,7 @@ int main()
             break;
 
         case 8:
-            add_two_before_last(beg, enter_student(), enter_student());
+            beg = add_two_before_last(beg, enter_student(), enter_student());
             puts("\tStudents were added to list");
             break;
 
